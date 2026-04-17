@@ -1,0 +1,20 @@
+name: Build Mac App
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Build with Xcode
+        run: |
+          xcodebuild clean build -project CountDown.xcodeproj -scheme CountDown -configuration Release -derivedDataPath build_output
+      - name: Zip the App
+        run: |
+          cd build_output/Build/Products/Release
+          zip -r CountDown.zip CountDown.app
+      - name: Upload App
+        uses: actions/upload-artifact@v4
+        with:
+          name: CountDown-Mac-App
+          path: build_output/Build/Products/Release/CountDown.zip
