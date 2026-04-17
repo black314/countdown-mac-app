@@ -11,7 +11,8 @@ struct TimerView: View {
                 .font(.system(size: 24, weight: .bold, design: .rounded))
                 .monospacedDigit()
                 .contentTransition(.numericText())
-                .foregroundStyle(LinearGradient.appGradient)
+                // 👇 这里改成了 .primary（自适应黑/白色）或者你也可以写死成 .black
+                .foregroundStyle(.primary) 
                 .animation(.spring(response: 0.5, dampingFraction: 1.0), value: timerModel.timeRemaining)
                 .scaleEffect(isTimerPulsing ? 1.35 : 1.0)
                 .animation(
@@ -29,7 +30,7 @@ struct TimerView: View {
                     .frame(height: 8)
                     .cornerRadius(4)
 
-                // Foreground progress bar
+                // Foreground progress bar (保持渐变彩虹色不变)
                 Rectangle()
                     .fill(LinearGradient.appGradient)
                     .frame(
