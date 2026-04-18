@@ -1,8 +1,21 @@
 import SwiftUI
 import ServiceManagement
 
+// 🌟 新增：强制修改软件在系统中的“身份属性”
+class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        // .regular 表示将其设置为标准的普通应用程序（会在Dock栏显示图标，也能被腾讯会议抓取）
+        NSApp.setActivationPolicy(.regular)
+        // 启动后自动将其激活到最前
+        NSApp.activate(ignoringOtherApps: true)
+    }
+}
+
 @main
 struct CountDownApp: App {
+    // 🌟 新增：让上面的身份设置生效
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     @State private var timerModel = TimerModel()
     
     var body: some Scene {
@@ -11,7 +24,6 @@ struct CountDownApp: App {
                 .environment(timerModel)
                 .preferredColorScheme(.none) // Supports both light and dark mode
         }
-        // 删除了隐藏标题栏的代码，让它恢复为标准窗口
         .commands {
             // Add keyboard commands
             CommandGroup(after: .newItem) {
