@@ -1,59 +1,17 @@
 import SwiftUI
 import AppKit
 
-// Window level preference key to pass the level through the view hierarchy
-struct WindowLevelKey: PreferenceKey {
-    static let defaultValue: NSWindow.Level = .normal
-    
-    static func reduce(value: inout NSWindow.Level, nextValue: () -> NSWindow.Level) {
-        value = nextValue()
-    }
-}
-
-// Window finder that attaches to SwiftUI view hierarchy
-struct WindowFinder: NSViewRepresentable {
-    var callback: (NSWindow?) -> Void
-    
-    func makeNSView(context: Context) -> NSView {
-        let view = NSView()
-        DispatchQueue.main.async {
-            callback(view.window)
-        }
-        return view
-    }
-    
-    func updateNSView(_ nsView: NSView, context: Context) {
-        DispatchQueue.main.async {
-            callback(nsView.window)
-        }
-    }
-}
-
-// Window level modifier
+// 我们把那些强制置顶、穿透桌面的底层调用全部删掉，只保留空壳
 struct WindowLevelModifier: ViewModifier {
     @Binding var alwaysOnTop: Bool
     
     func body(content: Content) -> some View {
-        content
-            .preference(key: WindowLevelKey.self, value: alwaysOnTop ? .floating : .normal)
-            .onPreferenceChange(WindowLevelKey.self) { level in
-                DispatchQueue.main.async {
-                    NSApplication.shared.windows.forEach { window in
-                        window.level = level
-                    }
-                }
-            }
-            .background(
-                WindowFinder { window in
-                    window?.level = self.alwaysOnTop ? .floating : .normal
-                    window?.collectionBehavior = self.alwaysOnTop ? 
-                        [.canJoinAllSpaces, .fullScreenAuxiliary] : []
-                }
-            )
+        // 什么都不做，直接返回内容，让它做一个本分的普通窗口
+        content 
     }
 }
 
-// Extension to make it easier to use
+// Extension 必须保留，因为其他界面代码里调用了它，不保留会导致编译失败
 extension View {
     func windowLevel(alwaysOnTop: Binding<Bool>) -> some View {
         self.modifier(WindowLevelModifier(alwaysOnTop: alwaysOnTop))
