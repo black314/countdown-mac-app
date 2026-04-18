@@ -11,7 +11,7 @@ struct CountDownApp: App {
                 .environment(timerModel)
                 .preferredColorScheme(.none) // Supports both light and dark mode
         }
-        .windowStyle(HiddenTitleBarWindowStyle()) // Clean window style
+        // 删除了隐藏标题栏的代码，让它恢复为标准窗口
         .commands {
             // Add keyboard commands
             CommandGroup(after: .newItem) {
