@@ -58,6 +58,9 @@ actor SoundManager {
             player.currentTime = 0
         }
         
+        // 👇 核心修改在这里：设置为 2，代表除了原本的 1 次外，再额外循环 2 次（共计 3 次）
+        player.numberOfLoops = 2
+        
         player.play()
     }
     
